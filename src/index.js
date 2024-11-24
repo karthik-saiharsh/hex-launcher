@@ -1,5 +1,9 @@
-const { app, BrowserWindow } = require('electron');
+const { app, BrowserWindow, Menu, globalShortcut } = require('electron');
 const path = require('node:path');
+
+///////// Global Variables /////////
+let mainWindow;
+///////// Global Variables /////////
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require('electron-squirrel-startup')) {
@@ -8,9 +12,11 @@ if (require('electron-squirrel-startup')) {
 
 const createWindow = () => {
   // Create the browser window.
-  const mainWindow = new BrowserWindow({
+  mainWindow = new BrowserWindow({
     width: 800,
     height: 600,
+    backgroundMaterial: "acrylic",
+    // transparent: true,
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
     },
@@ -19,12 +25,13 @@ const createWindow = () => {
   // and load the index.html of the app.
   mainWindow.loadFile(path.join(__dirname, 'index.html'));
 
+  // Disable Menu Bar for the application
+  Menu.setApplicationMenu(null);
+
   // mainWindow.webContents.openDevTools();
 };
 
-// This method will be called when Electron has finished
-// initialization and is ready to create browser windows.
-// Some APIs can only be used after this event occurs.
+
 app.whenReady().then(() => {
   createWindow();
 
@@ -35,11 +42,28 @@ app.whenReady().then(() => {
       createWindow();
     }
   });
-});
 
-// Quit when all windows are closed, except on macOS.
-app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin') {
+
+  // If the Window loses focus, then hide it automatically
+  mainWindow.on('blur', () => {mainWindow.hide()});
+
+  // Register the global shortcut to launch hex-launcher
+  const key_pressed = globalShortcut.register("Control+Space", () => {
+    // If the key is pressed, then show the app. Pressing the key again should hide it
+    if(mainWindow.isVisible()) {
+      mainWindow.hide();
+    } else if(!mainWindow.isVisible()) {
+      mainWindow.show();
+    }
+  });
+
+  // If registering global shortcut fails, quit the app
+  if(!key_pressed) {
+    console.log("There was an error registering Global Shortcut!!");
     app.quit();
   }
+});
+
+app.on('window-all-closed', () => {
+    app.quit();
 });
