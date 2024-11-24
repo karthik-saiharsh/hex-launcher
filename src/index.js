@@ -1,4 +1,4 @@
-const { app, BrowserWindow, Menu, globalShortcut } = require('electron');
+const { app, BrowserWindow, Menu, globalShortcut, screen } = require('electron');
 const path = require('node:path');
 
 ///////// Global Variables /////////
@@ -13,10 +13,12 @@ if (require('electron-squirrel-startup')) {
 const createWindow = () => {
   // Create the browser window.
   mainWindow = new BrowserWindow({
-    width: 800,
-    height: 600,
-    backgroundMaterial: "acrylic",
-    // transparent: true,
+    width: Math.floor(screen.getPrimaryDisplay().size.width / 2),
+    height: 150,
+    transparent: true,
+    frame: false,
+    title: "Hex-Launcher",
+    center: true,
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
     },
@@ -43,6 +45,7 @@ app.whenReady().then(() => {
     }
   });
 
+  mainWindow.hide(); // Keep the window Hidden during first launch
 
   // If the Window loses focus, then hide it automatically
   mainWindow.on('blur', () => {mainWindow.hide()});
@@ -62,6 +65,11 @@ app.whenReady().then(() => {
     console.log("There was an error registering Global Shortcut!!");
     app.quit();
   }
+
+  // Pressing ctrl+shift+Q will quit the app
+  globalShortcut.register("Control+Shift+Q", () => {app.quit()});
+
+  console.log("All Ready!");
 });
 
 app.on('window-all-closed', () => {
