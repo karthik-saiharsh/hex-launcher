@@ -62,12 +62,12 @@
         let launch_app = generate_result("./assets/application.png", `Launch Program ${text}`);
         launch_app.addEventListener('click', () => {
           window.backend.launchApp(text);
+          resClicked();
         });
         // Check if the app is installed
         window.backend.checkInstalled(text).then((res) => {
           if(res) {
             $('.resultBox').append(launch_app);
-            resClicked();
           }
         });
 
