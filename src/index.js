@@ -3,6 +3,17 @@ const path = require('node:path');
 const isInstalled = require('is-program-installed');
 const {exec} = require('child_process');
 
+//features from features.js
+const{
+  OpenApp,
+  calculations,
+  SolveEquation,
+  googleSearch,
+  youtubeSearch,
+  Dictionary,
+  Timer,
+} = require('./features');
+
 ///////// Global Variables /////////
 let mainWindow;
 ///////// Global Variables /////////
