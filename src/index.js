@@ -1,6 +1,17 @@
 const { app, BrowserWindow, Menu, globalShortcut, screen } = require('electron');
 const path = require('node:path');
 
+//features from features.js
+const{
+  OpenApp,
+  calculations,
+  SolveEquation,
+  googleSearch,
+  youtubeSearch,
+  Dictionary,
+  Timer,
+} = require('./features');
+
 ///////// Global Variables /////////
 let mainWindow;
 ///////// Global Variables /////////
