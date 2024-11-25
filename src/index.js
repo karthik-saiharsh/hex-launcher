@@ -1,5 +1,7 @@
-const { app, BrowserWindow, Menu, globalShortcut, screen } = require('electron');
+const { app, BrowserWindow, Menu, globalShortcut, screen, ipcMain, shell } = require('electron');
 const path = require('node:path');
+const isInstalled = require('is-program-installed');
+const {exec} = require('child_process');
 
 ///////// Global Variables /////////
 let mainWindow;
@@ -75,3 +77,10 @@ app.whenReady().then(() => {
 app.on('window-all-closed', () => {
     app.quit();
 });
+
+// Connecting Actions from IPCRenderer
+ipcMain.on('search', (event, query) => {shell.openExternal(`https://www.google.com/search?q=${encodeURIComponent(query)}`);});
+ipcMain.on('quit', () => {app.quit()});
+ipcMain.on('yt-search', (event, query) => {shell.openExternal(`https://www.youtube.com/results?search_query=${encodeURIComponent(query)}`);});
+ipcMain.handle('check-installed', (event, name) => {return isInstalled(name)});
+ipcMain.on('launch-app', (event, appName) => {exec(appName)});

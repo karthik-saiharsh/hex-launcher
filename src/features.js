@@ -43,9 +43,7 @@ function googleSearch(input) {
 
 //youtube search
 function youtubeSearch(input) {
-  const url = `https://www.youtube.com/results?search_query=${encodeURIComponent(
-    input
-  )}`;
+  const url = `https://www.youtube.com/results?search_query=${encodeURIComponent(input)}`;
   shell.openExternal(url); // open the search result in the browser
 }
 

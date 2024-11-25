@@ -10,13 +10,12 @@
     <div class="body">
       <div class="searchBar">
         <img src="./assets/search.svg" class="searchIcon">
-        <input type="text" name="search" id="search" class="search" placeholder="Search away...">
+        <input autofocus type="text" name="search" id="search" class="search" placeholder="Search away...">
       </div>
 
       <div class="resultBox">
 
         <!-- <div class="result">
-          <a href="https://www.flaticon.com/free-icons/google" title="google icons">Google icons created by Freepik - Flaticon</a>
            <img src="./assets/google.png" class="resimg">
            <p>Search in Google for "firefox"</p>
         </div> -->
@@ -27,6 +26,19 @@
 
       $(".resultBox").slideUp(); // Start with the result box closed
     
+      // Handling Operations which do not need a result to be shown
+      $("#search").on('keyup', (key) => {
+        // When a query is submitted
+        if(key.originalEvent.key === "Enter") {
+          let text = $("#search").val(); // Get the query
+
+          // If it is quit, then quit the app
+          if(text.trim().toLowerCase() === "quit") {
+            window.backend.quit();
+          }
+        }
+      });
+
       // Whenever the search bar is being edited
       $("#search").on('input', ()=>{
         let text = $("#search").val(); // Get the text entered
@@ -46,16 +58,29 @@
 
         // Generate a new set of results
 
-        // First Result will be an option for google search
-        // let google_search = generate_result("./assets/google.png", `Search in google fo ${text}`);
-        // $(".resultBox").append(google_search);
+        // Launching an application
+        let launch_app = generate_result("./assets/application.png", `Launch Program ${text}`);
+        launch_app.addEventListener('click', () => {
+          window.backend.launchApp(text);
+        });
+        // Check if the app is installed
+        window.backend.checkInstalled(text).then((res) => {
+          if(res) {
+            $('.resultBox').append(launch_app);
+          }
+        });
+
+        // google search
+        let google_search = generate_result("./assets/google.png", `Search in google for ${text}`);
+        google_search.addEventListener('click', () => {window.backend.webSearch(text); resClicked()});
+        $(".resultBox").append(google_search);
       });
 
       // If the search loses focus, close the result box
-      $("#search").on('blur', () => {
+      function resClicked() {
         $(".resultBox").slideUp();
         $("#search").val("");
-      });
+      }
 
       // Generates results for queries
       function generate_result(icon, text) {
