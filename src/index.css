@@ -130,6 +130,12 @@ body {
     width: 100%;
     height: 3rem;
 
+    background-color: transparent;
+    outline: none;
+    border: none;
+
+    text-align: left;
+
     color: #ffffff;
     font-family: 'jetbrains';
     font-size: 1rem;
@@ -145,9 +151,19 @@ body {
     cursor: pointer;
 
     user-select: none;
+
+    overflow-y: auto;
+    overflow-x: clip;
 }
 
-.result:hover {
+.result p {
+    width: 100%;
+    overflow-wrap: break-word;
+}
+
+.result:hover,
+.result:active,
+.result:focus {
     scale: 1.02;
 
     background-color: rgba(255, 255, 255, 0.1);
