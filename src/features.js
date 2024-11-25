@@ -3,6 +3,7 @@ const math = create(all); //initialising the mathjs
 const { shell } = require("electron"); //opening links in the browser
 const { exec } = require("child_process"); //for opening apps in the system
 const fetch = require("node-fetch"); //to fetch data from API'S
+const notifier = require("node-notifier");//for desktop notifications
 
 //function to launch an app present in the system
 function OpenApp(appName) {
@@ -68,6 +69,20 @@ async function Dictionary(word) {
   }
 }
 
+
+//function to set timer
+function Timer(sec){
+  setTimeout(()=>{
+    notifier.notify({
+      title: "Timer Alert",//title of the notification
+      message: "Time's up!!",//message to show user
+      sound: true, 
+    });
+   
+  },sec*1000);
+}
+
+
 module.exports = {
   OpenApp,
   calculations,
@@ -75,4 +90,5 @@ module.exports = {
   googleSearch,
   youtubeSearch,
   Dictionary,
+  Timer,
 };

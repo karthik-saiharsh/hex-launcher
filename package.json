@@ -26,6 +26,7 @@
   "author": "Karthik Saiharsh, Leela Mahalakshmi",
   "license": "GPL-3.0-only",
   "dependencies": {
-    "electron-squirrel-startup": "^1.0.1"
+    "electron-squirrel-startup": "^1.0.1",
+    "node-notifier": "^10.0.1"
   }
 }
