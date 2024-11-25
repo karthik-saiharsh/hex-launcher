@@ -14,7 +14,7 @@ const createWindow = () => {
   // Create the browser window.
   mainWindow = new BrowserWindow({
     width: Math.floor(screen.getPrimaryDisplay().size.width / 2),
-    height: 150,
+    height: 480,
     transparent: true,
     frame: false,
     title: "Hex-Launcher",

@@ -4,10 +4,43 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="index.css">
+    <script src="./assets/jquery-3.7.1.min.js"></script>
   </head>
   <body>
     <div class="body">
-      <input type="text" name="search" id="search" class="search" placeholder="Search away...">
+      <div class="searchBar">
+        <img src="./assets/search.svg" class="searchIcon">
+        <input type="text" name="search" id="search" class="search" placeholder="Search away...">
+      </div>
+
+      <div class="resultBox">
+
+      </div>
     </div>
+    <script>
+
+      $(".resultBox").slideUp(); // Start with the result box closed
+    
+      // Whenever the search bar is being edited
+      $("#search").on('input', ()=>{
+        let text = $("#search").val(); // Get the text entered
+
+        // If text is noe empty
+        if(text.length > 0) {
+          // Show the result box
+          $(".resultBox").slideDown();
+        }
+        if(text.length == 0) {
+          // Else close the result box
+          $('.resultBox').slideUp();
+        }
+      });
+
+      // If the search loses focus, close the result box
+      $("#search").on('blur', () => {
+        $(".resultBox").slideUp();
+        $("#search").val("");
+      })
+    </script>
   </body>
 </html>
