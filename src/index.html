@@ -67,6 +67,7 @@
         window.backend.checkInstalled(text).then((res) => {
           if(res) {
             $('.resultBox').append(launch_app);
+            resClicked();
           }
         });
 
