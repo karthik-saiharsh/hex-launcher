@@ -35,27 +35,27 @@ $("#search").on('input', ()=>{
     // Launching an application
     let launch_app = generate_result("./assets/application.png", `Launch Program ${text}`);
     launch_app.addEventListener('click', () => {
-        window.backend.launchApp(text);
         resClicked();
+        window.backend.launchApp(text);
     });
     // Check if the app is installed
-    // window.backend.checkInstalled(text).then((res) => {
-    //     if(res) {
-    //     $('.resultBox').append(launch_app);
-    //     }
-    // });
-    $('.resultBox').append(launch_app);
+    window.backend.checkInstalled(text).then((res) => {
+        if(res) {
+        $('.resultBox').append(launch_app);
+        }
+    });
 
     // google search
     let google_search = generate_result("./assets/google.png", `Search in google for ${text}`);
-    google_search.addEventListener('click', () => {window.backend.webSearch(text); resClicked()});
+    google_search.addEventListener('click', () => {resClicked(); window.backend.webSearch(text);});
     $(".resultBox").append(google_search);
 });
 
 // If the search loses focus, close the result box
 function resClicked() {
-$(".resultBox").slideUp();
-$("#search").val("");
+    $(".resultBox").slideUp();
+    $("#search").val("");
+    $("#search").focus();
 }
 
 // Generates results for queries
