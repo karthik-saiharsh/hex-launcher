@@ -2,7 +2,8 @@
     padding: 0px;
     margin: 0px;
     box-sizing: border-box;
-    user-select: none;
+    /* user-select: none; */
+    transition: all 250ms ease;
 }
 
 html {
@@ -29,6 +30,11 @@ html {
     src: url("./assets/font.ttf");
 }
 
+@font-face {
+    font-family: 'inter';
+    src: url("./assets/inter.ttf");
+}
+
 body {
     width: 100vw;
     overflow: auto;
@@ -39,6 +45,15 @@ body {
     height: fit-content;
     overflow-y: auto;
     background-color: #111111;
+}
+
+
+.title {
+    font-size: 6rem;
+}
+
+.sub-title {
+    font-size: 1.3rem;
 }
 
 .header {
@@ -73,6 +88,7 @@ body {
 
     display: flex;
     align-items: center;
+    justify-content: center;
 }
 
 .demo img {
@@ -100,13 +116,13 @@ body {
 }
 
 .explanation p {
-    width: 30rem;
+    width: 100%;
     word-wrap: break-word;
 
-    text-align: left;
+    text-align: center;
 
     font-family: 'jetbrains';
-    font-size: 1rem;
+    font-size: 1.1rem;
     color: #ffffff;
 }
 
@@ -143,7 +159,7 @@ body {
 
 .download {
     width: 100%;
-    height: 20rem;
+    height: fit-content;
 
     background-color: #111111;
 
@@ -194,7 +210,8 @@ body {
 
 .creator {
     width: 100%;
-    height: 40rem;
+    height: fit-content;
+    margin-bottom: 5rem;
 
     background-color: #111111;
 
@@ -247,4 +264,135 @@ body {
     display: flex;
     align-items: center;
     gap: 5rem;
+}
+
+.list {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10rem;
+}
+
+.dbtn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8rem;
+}
+
+@media screen and (max-width: 1550px){
+    .demo {
+        height: fit-content;
+        margin: 5rem 0rem 5rem 0rem;
+        flex-direction: column;
+        gap: 0px;
+    }
+
+    .demo h1 {
+        font-size: 3rem;
+    }
+
+    .explanation {
+        width: 80%;
+        height: fit-content;
+    }
+
+    .explanation p {
+        width: 100%;
+        font-size: 1.5rem;
+        margin-top: 4rem;
+    }
+}
+
+@media screen and (max-width: 1060px) {
+    .list {
+        flex-direction: column;
+        gap: 0px;
+    }
+
+    .demo img {
+        scale: 0.6;
+    }
+
+    .explanation p {
+        text-align: center;
+    }
+}
+
+@media screen and (max-width: 750px) {
+    .title {
+        font-size: 5rem;
+    }
+
+    .sub-title {
+        font-size: 1.2rem;
+    }
+/* 
+    .explanation {
+        width: 80%;
+    } */
+
+    .explanation h1 {
+        font-size: 2rem;
+    }
+
+    .explanation p {
+        font-size: 1rem;
+    }
+
+    .features h1 {
+        font-size: 3rem;
+    }
+
+    .dbtn {
+        flex-direction: column;
+        gap: 3rem;
+        /* gap: 2rem; */
+    }
+}
+
+@media screen and (max-width: 650px) {
+    .title {
+        font-size: 4rem;
+    }
+
+    .sub-title {
+        font-size: 1rem;
+    }
+
+    .owners {
+        flex-direction: column;
+    }
+}
+
+@media screen and (max-width: 570px) {
+
+    .demo {
+        flex-direction: column-reverse;
+    }
+
+    .demo img {
+        scale: 0.4;
+    }
+
+    /* .explanation {
+        width: 100%;
+    }
+
+    .explanation p {
+        text-align: center;
+    } */
+
+    .title {
+        font-size: 3rem;
+    }
+
+    .sub-title {
+        font-size: 0.9rem;
+    }
+
+    .fl {
+        font-size: 0.9rem;
+    }
 }
