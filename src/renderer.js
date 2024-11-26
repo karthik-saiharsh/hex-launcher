@@ -33,7 +33,7 @@ $("#search").on('input', ()=>{
     // Generate a new set of results:
 
     // Launching an application
-    let launch_app = generate_result("./assets/application.png", `Launch Program ${text}`);
+    let launch_app = generate_result("./assets/application.svg", `Launch Program ${text}`);
     launch_app.addEventListener('click', () => {
         resClicked();
         window.backend.launchApp(text);
@@ -46,7 +46,7 @@ $("#search").on('input', ()=>{
     });
 
     // google search
-    let google_search = generate_result("./assets/google.png", `Search in google for ${text}`);
+    let google_search = generate_result("./assets/google.svg", `Search in google for ${text}`);
     google_search.addEventListener('click', () => {resClicked(); window.backend.webSearch(text);});
     $(".resultBox").append(google_search);
 });
