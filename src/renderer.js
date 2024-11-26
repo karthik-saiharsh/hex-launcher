@@ -49,6 +49,11 @@ $("#search").on('input', ()=>{
     let google_search = generate_result("./assets/google.svg", `Search in google for ${text}`);
     google_search.addEventListener('click', () => {resClicked(); window.backend.webSearch(text);});
     $(".resultBox").append(google_search);
+
+    // youtube
+    let yt = generate_result("./assets/youtube.svg", `Search in youtube for ${text}`);
+    yt.addEventListener('click', () => {resClicked(); window.backend.openYt(text)});
+    $('.resultBox').append(yt);
 });
 
 // If the search loses focus, close the result box

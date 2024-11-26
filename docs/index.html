@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hex Launcher</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="body">
+        <div class="header">
+            <div class="heading">
+                <h1 style="font-size: 6rem;">Hex Launcher</h1>
+                <p style="font-size: 1.3rem;">Redefining multitasking and efficiency</p>
+            </div>
+        </div>
+
+        <div class="demo">
+            <img src="./assets/demo.png">
+            <div class="explanation">
+                <h1>An all in one <u>Global search</u> for all your tasks</h1>
+                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Error nihil repellat placeat inventore mollitia, reprehenderit cum eaque tenetur facere labore explicabo adipisci ipsum veniam facilis sit voluptatum ea cupiditate nostrum!</p>
+            </div>
+        </div>
+
+        <div class="features">
+            <h1>Features</h1>
+            <ul class="fl">
+                <li>Google Search</li>
+                <li>Launching Installed Apps</li>
+                <li>Youtube Search</li>
+                <li>Audio Control</li>
+                <li>Brightness Control</li>
+                <li>Math Calculations</li>
+                <li>Timer/Alarm</li>
+                <li>Download Videos from youtube and other sites</li>
+            </ul>
+        </div>
+
+        <div class="download">
+            <h1>Download now!</h1>
+            <a class="btn">Download</a>
+
+            <h1>Get Source Code</h1>
+            <a class="btn">Github -></a>
+        </div>
+
+        <div class="creator">
+            <h1>Created By</h1>
+            <div class="owners">
+
+                <div class="card" id="aut1">
+                    <img class="cimg" src="https://github.com/karthik-saiharsh.png">
+                    <p>Karthik Saiharsh</p>
+                </div>
+
+                <div class="card" id="aut2">
+                    <img class="cimg" src="https://github.com/Leela0o5.png">
+                    <p>Leela Mahalakshmi</p>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById("aut2").addEventListener('click', () => {
+            open("https://github.com/Leela0o5");
+        })
+
+        document.getElementById("aut1").addEventListener('click', () => {
+            open("https://github.com/karthik-saiharsh");
+        })
+    </script>
+</body>
+
+</html>

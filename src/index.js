@@ -85,3 +85,4 @@ ipcMain.on('quit', () => {app.quit()});
 ipcMain.on('yt-search', (event, query) => {shell.openExternal(`https://www.youtube.com/results?search_query=${encodeURIComponent(query)}`);});
 ipcMain.handle('check-installed', (event, name) => {return isInstalled(name)});
 ipcMain.on('launch-app', (event, appName) => {exec(appName)});
+ipcMain.on('open-yt', (event, query) => {shell.openExternal(`https://www.youtube.com/results?search_query=${encodeURIComponent(query)}`)});

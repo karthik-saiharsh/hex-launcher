@@ -5,5 +5,6 @@ contextBridge.exposeInMainWorld("backend", {
     webSearch: (query) => ipcRenderer.send('search', query),
     ytSearch: (query) => ipcRenderer.send('yt-search', query),
     checkInstalled: (appName) => ipcRenderer.invoke('check-installed', appName),
-    launchApp: (appName) => ipcRenderer.send('launch-app', appName)
+    launchApp: (appName) => ipcRenderer.send('launch-app', appName),
+    openYt: (query) => ipcRenderer.send('open-yt', query)
 });
