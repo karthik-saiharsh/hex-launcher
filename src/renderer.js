@@ -31,7 +31,7 @@ $("#search").on('keyup', (key) => {
     }
 });
 
-// Whenever the search bar had been edited
+// Whenever the search bar has been edited
 $("#search").on('input', ()=>{
     let text = $("#search").val(); // Get the text entered
 
