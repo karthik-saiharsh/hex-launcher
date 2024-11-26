@@ -16,14 +16,17 @@ if (require('electron-squirrel-startup')) {
 const createWindow = () => {
   // Create the browser window.
   mainWindow = new BrowserWindow({
-    width: Math.floor(screen.getPrimaryDisplay().size.width / 2),
+    width: 800,
     height: 480,
     transparent: true,
-    frame: false,
+    titleBarStyle: 'hidden',
     title: "Hex-Launcher",
     center: true,
+    show: false,
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
+      backgroundThrottling: false,
+      sandbox: true,
     },
   });
 
@@ -40,15 +43,7 @@ const createWindow = () => {
 app.whenReady().then(() => {
   createWindow();
 
-  // On OS X it's common to re-create a window in the app when the
-  // dock icon is clicked and there are no other windows open.
-  app.on('activate', () => {
-    if (BrowserWindow.getAllWindows().length === 0) {
-      createWindow();
-    }
-  });
-
-  mainWindow.hide(); // Keep the window Hidden during first launch
+  // mainWindow.hide(); // Keep the window Hidden during first launch
 
   // If the Window loses focus, then hide it automatically
   mainWindow.on('blur', () => {mainWindow.hide()});
@@ -86,3 +81,4 @@ ipcMain.on('yt-search', (event, query) => {shell.openExternal(`https://www.youtu
 ipcMain.handle('check-installed', (event, name) => {return isInstalled(name)});
 ipcMain.on('launch-app', (event, appName) => {exec(appName)});
 ipcMain.on('open-yt', (event, query) => {shell.openExternal(`https://www.youtube.com/results?search_query=${encodeURIComponent(query)}`)});
+ipcMain.on('print', (event, val) => {console.log(val)});

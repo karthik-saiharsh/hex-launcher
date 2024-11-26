@@ -1,6 +1,6 @@
 $(".resultBox").slideUp(); // Start with the result box closed
-    
-// Handling Operations which do not need a result to be shown
+
+// Handling queries which need a result to be shown after pressing enter
 $("#search").on('keyup', (key) => {
     // When a query is submitted
     if(key.originalEvent.key === "Enter") {
@@ -10,10 +10,28 @@ $("#search").on('keyup', (key) => {
         if(text.trim().toLowerCase() === "quit") {
         window.backend.quit();
         }
+
+        // Launching an application
+        launch_app_cmd = new RegExp('(?<=la:\s*).*');
+        let launch_app = generate_result("./assets/application.svg", `Launch Program ${text.match(launch_app_cmd)[0]}`);
+        launch_app.addEventListener('click', () => {
+            resClicked();
+            window.backend.launchApp(text);
+        });
+        // Check if the app is installed
+        if(launch_app_cmd.test(text)) {
+            window.backend.checkInstalled(text.match(launch_app_cmd)[0]).then((res) => {
+                if(res) {
+                    $('.resultBox').append(launch_app);
+                } else {
+                    $('.resultBox').append(generate_result("./assets/application.svg", `${text.match(launch_app_cmd)[0]} does not seem to installed on your computer`))
+                }
+            });
+        }
     }
 });
 
-// Whenever the search bar is being edited
+// Whenever the search bar had been edited
 $("#search").on('input', ()=>{
     let text = $("#search").val(); // Get the text entered
 
@@ -31,19 +49,6 @@ $("#search").on('input', ()=>{
     $(".resultBox").empty();
 
     // Generate a new set of results:
-
-    // Launching an application
-    let launch_app = generate_result("./assets/application.svg", `Launch Program ${text}`);
-    launch_app.addEventListener('click', () => {
-        resClicked();
-        window.backend.launchApp(text);
-    });
-    // Check if the app is installed
-    window.backend.checkInstalled(text).then((res) => {
-        if(res) {
-        $('.resultBox').append(launch_app);
-        }
-    });
 
     // google search
     let google_search = generate_result("./assets/google.svg", `Search in google for ${text}`);
