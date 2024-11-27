@@ -2,7 +2,7 @@ const { app, BrowserWindow, Menu, globalShortcut, screen, ipcMain, shell } = req
 const path = require('node:path');
 const isInstalled = require('is-program-installed');
 const {exec} = require('child_process');
-
+const {evaluate} = require('mathjs');
 
 ///////// Global Variables /////////
 let mainWindow;
@@ -82,3 +82,4 @@ ipcMain.handle('check-installed', (event, name) => {return isInstalled(name)});
 ipcMain.on('launch-app', (event, appName) => {exec(appName)});
 ipcMain.on('open-yt', (event, query) => {shell.openExternal(`https://www.youtube.com/results?search_query=${encodeURIComponent(query)}`)});
 ipcMain.on('print', (event, val) => {console.log(val)});
+ipcMain.handle('math-eval', (event, func) => {return evaluate(func)});

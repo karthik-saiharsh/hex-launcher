@@ -11,23 +11,6 @@ $("#search").on('keyup', (key) => {
         window.backend.quit();
         }
 
-        // Launching an application
-        launch_app_cmd = new RegExp('(?<=la:\s*).*');
-        let launch_app = generate_result("./assets/application.svg", `Launch Program ${text.match(launch_app_cmd)[0]}`);
-        launch_app.addEventListener('click', () => {
-            resClicked();
-            window.backend.launchApp(text);
-        });
-        // Check if the app is installed
-        if(launch_app_cmd.test(text)) {
-            window.backend.checkInstalled(text.match(launch_app_cmd)[0]).then((res) => {
-                if(res) {
-                    $('.resultBox').append(launch_app);
-                } else {
-                    $('.resultBox').append(generate_result("./assets/application.svg", `${text.match(launch_app_cmd)[0]} does not seem to installed on your computer`))
-                }
-            });
-        }
     }
 });
 
@@ -50,15 +33,68 @@ $("#search").on('input', ()=>{
 
     // Generate a new set of results:
 
-    // google search
-    let google_search = generate_result("./assets/google.svg", `Search in google for ${text}`);
-    google_search.addEventListener('click', () => {resClicked(); window.backend.webSearch(text);});
-    $(".resultBox").append(google_search);
+    ///// Result Reg Ex /////
+        google_pattern = new RegExp('(?<=g:\s*).*');
+        youtube_pattern = new RegExp('(?<=y:\s*).*');
+        launch_app_cmd = new RegExp('(?<=la:\s*).*');
+        math_pattern = new RegExp('(?<=m:\s*).*');
+    ///// Result Reg Ex /////
 
-    // youtube
-    let yt = generate_result("./assets/youtube.svg", `Search in youtube for ${text}`);
-    yt.addEventListener('click', () => {resClicked(); window.backend.openYt(text)});
-    $('.resultBox').append(yt);
+    // google search
+    if(google_pattern.test(text)) {
+        let google_search = generate_result("./assets/google.svg", `Search in google for "${text}"`);
+        google_search.addEventListener('click', () => {resClicked(); window.backend.webSearch(text.match(google_pattern)[0]);});
+        $(".resultBox").append(google_search);
+    }
+
+    // youtube search
+    else if(youtube_pattern.test(text)) {
+        let yt = generate_result("./assets/youtube.svg", `Search in youtube for "${text}"`);
+        yt.addEventListener('click', () => {resClicked(); window.backend.openYt(text.match(youtube_pattern)[0])});
+        $('.resultBox').append(yt);
+    }
+
+    // Launching an application
+    // Check if the app is installed
+    else if(launch_app_cmd.test(text)) {
+        window.backend.checkInstalled(text.match(launch_app_cmd)[0]).then((res) => {
+            if(res) {
+                let launch_app = generate_result("./assets/application.svg", `Launch Program "${text.match(launch_app_cmd)[0]}"`);
+                launch_app.addEventListener('click', () => {
+                    resClicked();
+                    window.backend.launchApp(text.match(launch_app_cmd)[0]);
+                });
+                // Clear all the results from the previous query
+                $(".resultBox").empty();
+                $('.resultBox').append(launch_app);
+            } else {
+                // Clear all the results from the previous query
+                $(".resultBox").empty();
+                $('.resultBox').append(generate_result("./assets/application.svg", `"${text.match(launch_app_cmd)[0]}" does not seem to installed on your computer`))
+            }
+        });
+    } 
+    
+    // Solving Math Expressions
+    else if(math_pattern.test(text)) {
+        // let yt = generate_result("./assets/calculator.svg", ``);
+        window.backend.evaluvateFunc(text.match(math_pattern)[0]).then((res) => {
+            if(res) {
+                $(".resultBox").append(generate_result("./assets/calculator.svg", res));
+            }
+        })
+        // ans = eval(text.match(math_pattern)[0]);
+        // window.backend.print(ans);
+        // $('.resultBox').append(yt);
+    }
+
+    // If no specific regex is mentioned, just offer to search online for the query
+    else {
+        let google_search = generate_result("./assets/search.svg", `Search online for "${text}"`);
+        google_search.addEventListener('click', () => {resClicked(); window.backend.webSearch(text);});
+        $(".resultBox").append(google_search);
+    }
+
 });
 
 // If the search loses focus, close the result box

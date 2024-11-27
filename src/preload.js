@@ -7,5 +7,6 @@ contextBridge.exposeInMainWorld("backend", {
     checkInstalled: (appName) => ipcRenderer.invoke('check-installed', appName),
     launchApp: (appName) => ipcRenderer.send('launch-app', appName),
     openYt: (query) => ipcRenderer.send('open-yt', query),
-    print: (text) => ipcRenderer.send('print', text)
+    print: (text) => ipcRenderer.send('print', text),
+    evaluvateFunc: (func) => ipcRenderer.invoke('math-eval', func)
 });
