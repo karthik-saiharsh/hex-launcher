@@ -61,7 +61,7 @@ app.whenReady().then(() => {
     } else if(!mainWindow.isVisible()) {
       mainWindow.show();
     }
-  });
+  }); 
 
   // If registering global shortcut fails, quit the app
   if(!key_pressed) {
@@ -123,6 +123,7 @@ ipcMain.handle('dictionary', async (event, word) => {
       return "Meaning or definition not found.";
   }
 });
+
 ipcMain.on('set-timer', (event, seconds) => {
   let remainingTime = seconds;
 

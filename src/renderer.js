@@ -119,6 +119,8 @@ $("#search").on("input", () => {
         }
       });
   }
+
+
   // solving math equations
   else if (equation_pattern.test(text)) {
     let [equation, variable] = text.match(equation_pattern)[0].split(" with ");
@@ -128,6 +130,7 @@ $("#search").on("input", () => {
       );
     });
   }
+  
   //meaning of the word
   else if (dictionary_pattern.test(text)) {
     let word = text.match(dictionary_pattern)[0];
@@ -287,8 +290,11 @@ $(document).on("keyup", (key) => {
     }
   } else {
     if ($(document.activeElement).attr("id") != "search") {
-      $("#search").val($("#search").val() + key.originalEvent.key);
+      keys_to_ignore = [16, 18, 8, 39, 37, 144, 17, 91, 27, 45, 36, 35, 33, 34, 13];
+      if(!keys_to_ignore.includes(key.originalEvent.keyCode)) {
+        $("#search").val($("#search").val() + key.originalEvent.key);
+      }
       $("#search").focus();
     }
-  }
+  }     
 });

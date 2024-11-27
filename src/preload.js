@@ -16,6 +16,5 @@ contextBridge.exposeInMainWorld("backend", {
     onTimerDone: (callback) => ipcRenderer.on('timer-done', callback),
     setAudio: (volume) => ipcRenderer.invoke('set-audio', volume),
     setBrightness: (brightness) => ipcRenderer.invoke('set-brightness', brightness),
-    convertCurrency: (amount, fromCurrency, toCurrency) => 
-        ipcRenderer.invoke("convert-currency", amount, fromCurrency, toCurrency),
+    convertCurrency: (amount, fromCurrency, toCurrency) => ipcRenderer.invoke("convert-currency", amount, fromCurrency, toCurrency),
 });
