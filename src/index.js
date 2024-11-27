@@ -4,6 +4,7 @@ const isInstalled = require('is-program-installed');
 const {exec} = require('child_process');
 const { evaluate} = require('mathjs');
 const loudness = require('loudness');
+const fetch = require("node-fetch");
 
 
 
@@ -156,5 +157,29 @@ ipcMain.handle('set-brightness', (event, brightness) => {
       return `Brightness set to ${brightness}%`;
   } catch (error) {
       return "Failed to set brightness.";
+  }
+});
+
+ipcMain.handle("convert-currency", async (event, amount, fromCurrency, toCurrency) => {
+  try {
+      const apiKey = "4fb655c61aafd274bbc29be0"; //API Key
+      const url = `https://v6.exchangerate-api.com/v6/${apiKey}/latest/${fromCurrency}`;
+      
+      const response = await fetch(url);
+      if (!response.ok) {
+          throw new Error(`Error fetching exchange rates: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      const rate = data.conversion_rates[toCurrency];
+
+      if (!rate) {
+          throw new Error(`Conversion rate for ${toCurrency} not found.`);
+      }
+
+      const convertedAmount = (amount * rate).toFixed(2);
+      return `${amount} ${fromCurrency} = ${convertedAmount} ${toCurrency}`;
+  } catch (error) {
+      return "Failed to fetch currency conversion.";
   }
 });

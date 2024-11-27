@@ -43,6 +43,8 @@ $("#search").on("input", () => {
   youtube_pattern = new RegExp("y:s*(.+)");
   launch_app_cmd = new RegExp("la:s*(.+)");
   math_pattern = new RegExp("m:s*(.+)");
+  currency_pattern = new RegExp("convert:\\s*([0-9.]+)\\s*([A-Za-z]+)\\s*to\\s*([A-Za-z]+)", "i");
+
   ///// Result Reg Ex /////
 
   // google search
@@ -191,6 +193,23 @@ else if (brightness_pattern.test(text)) {
         });
     } else {
         $(".resultBox").append(generate_result("./assets/brightnesssettings.svg", "Invalid brightness value. Please specify a value between 0 and 100."));
+    }
+}
+
+else if (currency_pattern.test(text)) {
+    const matches = text.match(currency_pattern);
+    const amount = parseFloat(matches[1]); // Extract amount
+    const fromCurrency = matches[2].toUpperCase(); // Extract source currency
+    const toCurrency = matches[3].toUpperCase(); // Extract target currency
+
+    if (!isNaN(amount) && fromCurrency && toCurrency) {
+        window.backend.convertCurrency(amount, fromCurrency, toCurrency).then((result) => {
+            $(".resultBox").append(generate_result("./assets/money.svg", result));
+        });
+    } else {
+        $(".resultBox").append(
+            generate_result("./assets/money.svg", "Invalid currency conversion query.")
+        );
     }
 }
   // If no specific regex is mentioned, just offer to search online for the query
