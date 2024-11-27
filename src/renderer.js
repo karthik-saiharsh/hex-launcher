@@ -34,38 +34,40 @@ $("#search").on('input', ()=>{
     // Generate a new set of results:
 
     ///// Result Reg Ex /////
-        google_pattern = new RegExp('(?<=g:\s*).*');
-        youtube_pattern = new RegExp('(?<=y:\s*).*');
-        launch_app_cmd = new RegExp('(?<=la:\s*).*');
-        math_pattern = new RegExp('(?<=m:\s*).*');
+
+       
         equation_pattern = new RegExp('(?<=eq:\\s*).*');
         dictionary_pattern = new RegExp('(?<=dict:\\s*).*');
         timer_pattern = new RegExp('(?<=timer:\\s*).*');
+        google_pattern = new RegExp('g:\s*(.+)');
+        youtube_pattern = new RegExp('y:\s*(.+)');
+        launch_app_cmd = new RegExp('la:\s*(.+)');
+        math_pattern = new RegExp('m:\s*(.+)');
     ///// Result Reg Ex /////
 
     // google search
     if(google_pattern.test(text)) {
-        let google_search = generate_result("./assets/google.svg", `Search in google for "${text}"`);
-        google_search.addEventListener('click', () => {resClicked(); window.backend.webSearch(text.match(google_pattern)[0]);});
+        let google_search = generate_result("./assets/google.svg", `Search in google for "${text.match(google_pattern)[1].trimLeft()}"`);
+        google_search.addEventListener('click', () => {resClicked(); window.backend.webSearch(text.match(google_pattern)[1].trimLeft());});
         $(".resultBox").append(google_search);
     }
 
     // youtube search
     else if(youtube_pattern.test(text)) {
-        let yt = generate_result("./assets/youtube.svg", `Search in youtube for "${text}"`);
-        yt.addEventListener('click', () => {resClicked(); window.backend.openYt(text.match(youtube_pattern)[0])});
+        let yt = generate_result("./assets/youtube.svg", `Search in youtube for "${text.match(youtube_pattern)[1].trimLeft()}"`);
+        yt.addEventListener('click', () => {resClicked(); window.backend.openYt(text.match(youtube_pattern)[1].trimLeft())});
         $('.resultBox').append(yt);
     }
 
     // Launching an application
     // Check if the app is installed
     else if(launch_app_cmd.test(text)) {
-        window.backend.checkInstalled(text.match(launch_app_cmd)[0]).then((res) => {
+        window.backend.checkInstalled(text.match(launch_app_cmd)[1].trimLeft()).then((res) => {
             if(res) {
-                let launch_app = generate_result("./assets/application.svg", `Launch Program "${text.match(launch_app_cmd)[0]}"`);
+                let launch_app = generate_result("./assets/application.svg", `Launch Program "${text.match(launch_app_cmd)[1].trimLeft()}"`);
                 launch_app.addEventListener('click', () => {
                     resClicked();
-                    window.backend.launchApp(text.match(launch_app_cmd)[0]);
+                    window.backend.launchApp(text.match(launch_app_cmd)[1].trimLeft());
                 });
                 // Clear all the results from the previous query
                 $(".resultBox").empty();
@@ -73,7 +75,7 @@ $("#search").on('input', ()=>{
             } else {
                 // Clear all the results from the previous query
                 $(".resultBox").empty();
-                $('.resultBox').append(generate_result("./assets/application.svg", `"${text.match(launch_app_cmd)[0]}" does not seem to installed on your computer`))
+                $('.resultBox').append(generate_result("./assets/application.svg", `"${text.match(launch_app_cmd)[1].trimLeft()}" does not seem to installed on your computer`))
             }
         });
     } 
@@ -81,14 +83,11 @@ $("#search").on('input', ()=>{
     // Solving Math Expressions
     else if(math_pattern.test(text)) {
         // let yt = generate_result("./assets/calculator.svg", ``);
-        window.backend.evaluvateFunc(text.match(math_pattern)[0]).then((res) => {
+        window.backend.evaluvateFunc(text.match(math_pattern)[1].trimLeft()).then((res) => {
             if(res) {
                 $(".resultBox").append(generate_result("./assets/calculator.svg", res));
             }
         })
-        // ans = eval(text.match(math_pattern)[0]);
-        // window.backend.print(ans);
-        // $('.resultBox').append(yt);
     }
 // solving math equations
     else if (equation_pattern.test(text)) {
@@ -182,14 +181,8 @@ $(document).on('keyup', (key) => {
             $(document.activeElement).next().focus();
         }
     }
-});
 
-// Move focus up to the previous child by pressing up arrow
-$(document).on('keyup', (key) => {
-
-    let results = $('.resultBox').children(".result"); // Get all results
-
-    if(key.originalEvent.key === "ArrowUp") {
+    else if(key.originalEvent.key === "ArrowUp") {
         
         if($(document.activeElement).attr('id')=='search') {
             // If searhc bar is active, move focus to first result element
@@ -200,6 +193,13 @@ $(document).on('keyup', (key) => {
         } else {
             // Else move focus to next result
             $(document.activeElement).prev().focus();
+        }
+    }
+
+    else {
+        if($(document.activeElement).attr('id') != 'search') {
+            $("#search").val($("#search").val() + key.originalEvent.key);
+            $("#search").focus();
         }
     }
 });

@@ -309,7 +309,12 @@ body {
     .list {
         flex-direction: column;
         gap: 0px;
+        align-items: center;
     }
+
+    /* .fl {
+        width: 100%;
+    } */
 
     .demo img {
         scale: 0.6;
