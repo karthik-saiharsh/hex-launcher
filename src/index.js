@@ -3,6 +3,7 @@ const path = require('node:path');
 const isInstalled = require('is-program-installed');
 const {exec} = require('child_process');
 const { evaluate} = require('mathjs');
+const loudness = require('loudness');
 
 
 
@@ -88,29 +89,23 @@ ipcMain.on('print', (event, val) => {console.log(val)});
 ipcMain.handle('math-eval', (event, func) => {return evaluate(func)});
 ipcMain.handle('solve-equation', (event, equation, variable) => {
   try {
-      // Define the function to find roots
       const evaluateEquation = (x) => {
           const expr = equation.replace(new RegExp(variable, 'g'), `(${x})`);
           return evaluate(expr);
       };
-
-      // Simple numerical method: Test values between -100 and 100
       const solutions = [];
       for (let x = -100; x <= 100; x += 0.1) {
           const result = evaluateEquation(x);
-          if (Math.abs(result) < 1e-5) { // Close enough to zero
-              solutions.push(Number(x.toFixed(2))); // Add rounded solution
+          if (Math.abs(result) < 1e-5) { 
+              solutions.push(Number(x.toFixed(2))); 
           }
       }
-
-      // Remove duplicates and return unique solutions
       const uniqueSolutions = [...new Set(solutions)];
       if (uniqueSolutions.length === 0) {
           return "No solution found for the given equation.";
       }
       return `Solution: ${uniqueSolutions.join(', ')}`;
   } catch (error) {
-      console.error("Error solving equation:", error.message);
       return "The equation cannot be solved.";
   }
 });
@@ -132,13 +127,34 @@ ipcMain.on('set-timer', (event, seconds) => {
 
   const interval = setInterval(() => {
       if (remainingTime > 0) {
-          // Send the remaining time to the renderer process
           event.reply('timer-update', remainingTime);
           remainingTime--;
       } else {
           clearInterval(interval);
-          // Notify when the timer is up
           event.reply('timer-done');
       }
   }, 1000);
+});
+ipcMain.handle('set-audio', async (event, volume) => {
+  try {
+      await loudness.setVolume(volume); 
+      return `Audio volume set to ${volume}%`;
+  } catch (error) {
+      return "Failed to set audio volume.";
+  }
+});
+
+ipcMain.handle('set-brightness', (event, brightness) => {
+  try {
+      // Windows-specific brightness control using PowerShell
+      const command = `powershell.exe (Get-WmiObject -Namespace root/WMI -Class WmiMonitorBrightnessMethods).WmiSetBrightness(1,${brightness})`;
+      exec(command, (error) => {
+          if (error) {
+              return `Failed to set brightness: ${error.message}`;
+          }
+      });
+      return `Brightness set to ${brightness}%`;
+  } catch (error) {
+      return "Failed to set brightness.";
+  }
 });

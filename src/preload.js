@@ -13,5 +13,7 @@ contextBridge.exposeInMainWorld("backend", {
     getDefinition: (word) => ipcRenderer.invoke('dictionary', word),
     setTimer: (seconds) => ipcRenderer.send('set-timer', seconds),
     onTimerUpdate: (callback) => ipcRenderer.on('timer-update', (event, time) => callback(time)),
-    onTimerDone: (callback) => ipcRenderer.on('timer-done', callback)
+    onTimerDone: (callback) => ipcRenderer.on('timer-done', callback),
+    setAudio: (volume) => ipcRenderer.invoke('set-audio', volume),
+    setBrightness: (brightness) => ipcRenderer.invoke('set-brightness', brightness),
 });
