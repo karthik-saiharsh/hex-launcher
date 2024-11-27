@@ -90,6 +90,7 @@ body {
     width: 1.5rem;
     height: 1.5rem;
     opacity: 0.85;
+    user-select: none;
 }
 
 #search::placeholder {
