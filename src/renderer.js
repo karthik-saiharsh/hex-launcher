@@ -38,6 +38,9 @@ $("#search").on('input', ()=>{
         youtube_pattern = new RegExp('(?<=y:\s*).*');
         launch_app_cmd = new RegExp('(?<=la:\s*).*');
         math_pattern = new RegExp('(?<=m:\s*).*');
+        equation_pattern = new RegExp('(?<=eq:\\s*).*');
+        dictionary_pattern = new RegExp('(?<=dict:\\s*).*');
+        timer_pattern = new RegExp('(?<=timer:\\s*).*');
     ///// Result Reg Ex /////
 
     // google search
@@ -87,13 +90,50 @@ $("#search").on('input', ()=>{
         // window.backend.print(ans);
         // $('.resultBox').append(yt);
     }
+// solving math equations
+    else if (equation_pattern.test(text)) {
+        let [equation, variable] = text.match(equation_pattern)[0].split(' with ');
+        window.backend.solveEquation(equation, variable).then((res) => {
+            $(".resultBox").append(generate_result("./assets/equation.svg", `Solution: ${res}`));
+        });
+    }
+    //meaning of the word
+    else if (dictionary_pattern.test(text)) {
+        let word = text.match(dictionary_pattern)[0];
+        window.backend.getDefinition(word).then((definition) => {
+            $(".resultBox").append(generate_result("./assets/Dictionary.svg", `Definition: ${definition}`));
+        });
+    }
+//timer functionality
+else if (timer_pattern.test(text)) {
+    let seconds = parseInt(text.match(timer_pattern)[0]);
+    if (!isNaN(seconds)) {
+        // Create a result box for the timer countdown
+        let timer_result = generate_result("./assets/timer.svg", `Timer: ${seconds} seconds`);
+        $(".resultBox").append(timer_result);
 
+        // Start the timer
+        window.backend.setTimer(seconds);
+
+        // Update the timer UI on each tick
+        window.backend.onTimerUpdate((time) => {
+            timer_result.querySelector('p').innerHTML = `Timer: ${time} seconds remaining`;
+        });
+
+        // When the timer is done, update the message
+        window.backend.onTimerDone(() => {
+            timer_result.querySelector('p').innerHTML = "Time's up!";
+        });
+    }
+}
     // If no specific regex is mentioned, just offer to search online for the query
     else {
         let google_search = generate_result("./assets/search.svg", `Search online for "${text}"`);
         google_search.addEventListener('click', () => {resClicked(); window.backend.webSearch(text);});
         $(".resultBox").append(google_search);
     }
+
+    
 
 });
 

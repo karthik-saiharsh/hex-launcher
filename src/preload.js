@@ -8,5 +8,10 @@ contextBridge.exposeInMainWorld("backend", {
     launchApp: (appName) => ipcRenderer.send('launch-app', appName),
     openYt: (query) => ipcRenderer.send('open-yt', query),
     print: (text) => ipcRenderer.send('print', text),
-    evaluvateFunc: (func) => ipcRenderer.invoke('math-eval', func)
+    evaluvateFunc: (func) => ipcRenderer.invoke('math-eval', func),
+    solveEquation: (equation, variable) => ipcRenderer.invoke('solve-equation', equation, variable),
+    getDefinition: (word) => ipcRenderer.invoke('dictionary', word),
+    setTimer: (seconds) => ipcRenderer.send('set-timer', seconds),
+    onTimerUpdate: (callback) => ipcRenderer.on('timer-update', (event, time) => callback(time)),
+    onTimerDone: (callback) => ipcRenderer.on('timer-done', callback)
 });
