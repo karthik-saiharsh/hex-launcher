@@ -133,13 +133,23 @@ $("#search").on("input", () => {
   
   //meaning of the word
   else if (dictionary_pattern.test(text)) {
-    let word = text.match(dictionary_pattern)[0];
-    window.backend.getDefinition(word).then((definition) => {
-      $(".resultBox").append(
-        generate_result("./assets/Dictionary.svg", `Definition: ${definition}`)
-      );
-    });
-  }
+    const word = text.match(dictionary_pattern)[1].trim();
+    window.backend.getDefinition(word)
+        .then((definition) => {
+            const resultBox = document.querySelector(".resultBox");
+            resultBox.innerHTML = '';
+            // Displays
+            const resultElement = generate_result("./assets/Dictionary.svg", `Definition of "${word}": ${definition}`);
+            resultBox.appendChild(resultElement);
+        })
+        .catch((error) => {
+            const resultBox = document.querySelector(".resultBox");
+            resultBox.innerHTML = '';
+            const errorElement = generate_result("./assets/Dictionary.svg", `Error: ${error}`);
+            resultBox.appendChild(errorElement);
+        });
+}
+
   //timer functionality
   else if (timer_pattern.test(text)) {
     let seconds = parseInt(text.match(timer_pattern)[0]);
@@ -168,36 +178,53 @@ $("#search").on("input", () => {
     }
   } 
   // Setting Audio 
-  else if (audio_pattern.test(text)) {
-    // Extract the audio volume 
-    let audioInput = text.match(audio_pattern)[0];
-    let volume = parseInt(audioInput.replace(/[^0-9]/g, "")); // Remove non-numeric characters
-
-    // Validate volume value
-    if (!isNaN(volume) && volume >= 0 && volume <= 100) {
-        window.backend.setAudio(volume).then((response) => {
-            $(".resultBox").append(generate_result("./assets/audio.svg", response));
-        });
-    } else {
-        $(".resultBox").append(generate_result("./assets/audio.svg", "Invalid audio volume. Please specify a value between 0 and 100."));
-    }
+  // Audio Control
+else if (audio_pattern.test(text)) {
+  let volume = parseInt(text.match(audio_pattern)[1].replace(/[^0-9]/g, ""));
+  if (!isNaN(volume) && volume >= 0 && volume <= 100) {
+      let audioResult = generate_result(
+          "./assets/audio.svg",
+          `Set audio volume to ${volume}%`
+      );
+      // Add a click event listener
+      audioResult.addEventListener("click", () => {
+          resClicked(); // Handle the result click event
+          window.backend.setAudio(volume).then((response) => {
+              // Display the response in the result box
+              $(".resultBox").append(generate_result("./assets/audio.svg", response));
+          });
+      });
+         $(".resultBox").append(audioResult);
+  } else {
+      // error message 
+      $(".resultBox").append(generate_result("./assets/audio.svg", "Invalid audio volume. Please specify a value between 0 and 100."));
+  }
 }
+
 
 // Set screen brightness
 else if (brightness_pattern.test(text)) {
-    // Extract the brightness value
-    let brightnessInput = text.match(brightness_pattern)[0];
-    let brightness = parseInt(brightnessInput.replace(/[^0-9]/g, "")); // Remove non-numeric characters
-
-    // Validate brightness value
-    if (!isNaN(brightness) && brightness >= 0 && brightness <= 100) {
-        window.backend.setBrightness(brightness).then((response) => {
-            $(".resultBox").append(generate_result("./assets/brightnesssettings.svg", response));
-        });
-    } else {
-        $(".resultBox").append(generate_result("./assets/brightnesssettings.svg", "Invalid brightness value. Please specify a value between 0 and 100."));
-    }
+  let brightness = parseInt(text.match(brightness_pattern)[1].replace(/[^0-9]/g, ""));
+  if (!isNaN(brightness) && brightness >= 0 && brightness <= 100) {
+      let brightnessResult = generate_result(
+          "./assets/brightnesssettings.svg",
+          `Set brightness to ${brightness}%`
+      );
+      // Added a click event listener
+      brightnessResult.addEventListener("click", () => {
+          resClicked(); 
+          window.backend.setBrightness(brightness).then((response) => {
+              // Display the response in the result box
+              $(".resultBox").append(generate_result("./assets/brightnesssettings.svg", response));
+          });
+      });
+      $(".resultBox").append(brightnessResult);
+  } else {
+      // error message
+      $(".resultBox").append(generate_result("./assets/brightnesssettings.svg", "Invalid brightness value. Please specify a value between 0 and 100."));
+  }
 }
+
 
 else if (currency_pattern.test(text)) {
     const matches = text.match(currency_pattern);

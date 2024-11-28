@@ -9,6 +9,7 @@ const fetch = require("node-fetch");
 
 
 
+
 ///////// Global Variables /////////
 let mainWindow;
 ///////// Global Variables /////////
@@ -111,16 +112,17 @@ ipcMain.handle('solve-equation', (event, equation, variable) => {
   }
 });
 
-ipcMain.handle('dictionary', async (event, word) => {
+ipcMain.handle('get-definition', async (event, word) => {
   try {
       const response = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${word}`);
       if (!response.ok) {
-          throw new Error("Word not found");
+          throw new Error('Word not found');
       }
       const data = await response.json();
-      return data[0].meanings[0].definitions[0].definition;
+      const definition = data[0]?.meanings[0]?.definitions[0]?.definition || 'Definition not found.';
+      return definition;
   } catch (error) {
-      return "Meaning or definition not found.";
+      return 'Meaning or definition not found.';
   }
 });
 
@@ -184,3 +186,7 @@ ipcMain.handle("convert-currency", async (event, amount, fromCurrency, toCurrenc
       return "Failed to fetch currency conversion.";
   }
 });
+
+function newFunction() {
+  return require('electron');
+}
