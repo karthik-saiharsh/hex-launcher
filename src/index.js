@@ -119,8 +119,7 @@ ipcMain.handle('get-definition', async (event, word) => {
           throw new Error('Word not found');
       }
       const data = await response.json();
-      const definition = data[0]?.meanings[0]?.definitions[0]?.definition || 'Definition not found.';
-      return definition;
+      return data;
   } catch (error) {
       return 'Meaning or definition not found.';
   }

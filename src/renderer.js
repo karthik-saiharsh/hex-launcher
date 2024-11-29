@@ -34,10 +34,10 @@ $("#search").on("input", () => {
 
   ///// Result Reg Ex /////
 
-  audio_pattern = new RegExp("audio:\\s*(\\d+)");
-  brightness_pattern = new RegExp("brightness:\\s*(\\d+)");
+  audio_pattern = new RegExp("a:\\s*(\\d+)");
+  brightness_pattern = new RegExp("b:\\s*(\\d+)");
   equation_pattern = new RegExp("eq:s*(.+)");
-  dictionary_pattern = new RegExp("dict:s*(.+)");
+  dictionary_pattern = new RegExp("define:s*(.+)");
   timer_pattern = new RegExp("timer:s*(.+)");
   google_pattern = new RegExp("g:s*(.+)");
   youtube_pattern = new RegExp("y:s*(.+)");
@@ -130,25 +130,31 @@ $("#search").on("input", () => {
       );
     });
   }
-  
+
   //meaning of the word
   else if (dictionary_pattern.test(text)) {
     const word = text.match(dictionary_pattern)[1].trim();
-    window.backend.getDefinition(word)
+    let dict_def = generate_result("./assets/Dictionary.svg", `Get meaning of ${word}`);
+    dict_def.addEventListener('click', () => {
+      window.backend.getDefinition(word)
         .then((definition) => {
-            const resultBox = document.querySelector(".resultBox");
-            resultBox.innerHTML = '';
-            // Displays
-            const resultElement = generate_result("./assets/Dictionary.svg", `Definition of "${word}": ${definition}`);
-            resultBox.appendChild(resultElement);
+          definitions = definition[0]['meanings'][0]['definitions']; // Get all definitions
+          $(".resultBox").empty() // Clear the old result
+          // Show all meanings
+          for (i = 0; i < definitions.length; i++) {
+            let definition = generate_result("./assets/Dictionary.svg", definitions[i]['definition']);
+            $(".resultBox").append(definition);
+          }
         })
         .catch((error) => {
-            const resultBox = document.querySelector(".resultBox");
-            resultBox.innerHTML = '';
-            const errorElement = generate_result("./assets/Dictionary.svg", `Error: ${error}`);
-            resultBox.appendChild(errorElement);
+          const resultBox = document.querySelector(".resultBox");
+          resultBox.innerHTML = '';
+          const errorElement = generate_result("./assets/Dictionary.svg", `Error: ${error}`);
+          resultBox.appendChild(errorElement);
         });
-}
+    });
+    $(".resultBox").append(dict_def);
+  }
 
   //timer functionality
   else if (timer_pattern.test(text)) {
@@ -176,72 +182,74 @@ $("#search").on("input", () => {
         timer_result.querySelector("p").innerHTML = "Time's up!";
       });
     }
-  } 
+  }
+
   // Setting Audio 
   // Audio Control
-else if (audio_pattern.test(text)) {
-  let volume = parseInt(text.match(audio_pattern)[1].replace(/[^0-9]/g, ""));
-  if (!isNaN(volume) && volume >= 0 && volume <= 100) {
+  else if (audio_pattern.test(text)) {
+    let volume = parseInt(text.match(audio_pattern)[1].replace(/[^0-9]/g, ""));
+    if (!isNaN(volume) && volume >= 0 && volume <= 100) {
       let audioResult = generate_result(
-          "./assets/audio.svg",
-          `Set audio volume to ${volume}%`
+        "./assets/audio.svg",
+        `Set audio volume to ${volume}%`
       );
       // Add a click event listener
       audioResult.addEventListener("click", () => {
-          resClicked(); // Handle the result click event
-          window.backend.setAudio(volume).then((response) => {
-              // Display the response in the result box
-              $(".resultBox").append(generate_result("./assets/audio.svg", response));
-          });
+        resClicked(); // Handle the result click event
+        window.backend.setAudio(volume).then((response) => {
+          // Display the response in the result box
+          $(".resultBox").append(generate_result("./assets/audio.svg", response));
+        });
       });
-         $(".resultBox").append(audioResult);
-  } else {
+      $(".resultBox").append(audioResult);
+    } else {
       // error message 
       $(".resultBox").append(generate_result("./assets/audio.svg", "Invalid audio volume. Please specify a value between 0 and 100."));
+    }
   }
-}
 
 
-// Set screen brightness
-else if (brightness_pattern.test(text)) {
-  let brightness = parseInt(text.match(brightness_pattern)[1].replace(/[^0-9]/g, ""));
-  if (!isNaN(brightness) && brightness >= 0 && brightness <= 100) {
+  // Set screen brightness
+  else if (brightness_pattern.test(text)) {
+    let brightness = parseInt(text.match(brightness_pattern)[1].replace(/[^0-9]/g, ""));
+    if (!isNaN(brightness) && brightness >= 0 && brightness <= 100) {
       let brightnessResult = generate_result(
-          "./assets/brightnesssettings.svg",
-          `Set brightness to ${brightness}%`
+        "./assets/brightnesssettings.svg",
+        `Set brightness to ${brightness}%`
       );
       // Added a click event listener
       brightnessResult.addEventListener("click", () => {
-          resClicked(); 
-          window.backend.setBrightness(brightness).then((response) => {
-              // Display the response in the result box
-              $(".resultBox").append(generate_result("./assets/brightnesssettings.svg", response));
-          });
+        resClicked();
+        window.backend.setBrightness(brightness).then((response) => {
+          // Display the response in the result box
+          $(".resultBox").append(generate_result("./assets/brightnesssettings.svg", response));
+        });
       });
       $(".resultBox").append(brightnessResult);
-  } else {
+    } else {
       // error message
       $(".resultBox").append(generate_result("./assets/brightnesssettings.svg", "Invalid brightness value. Please specify a value between 0 and 100."));
+    }
   }
-}
 
 
-else if (currency_pattern.test(text)) {
+  else if (currency_pattern.test(text)) {
     const matches = text.match(currency_pattern);
     const amount = parseFloat(matches[1]); // Extract amount
     const fromCurrency = matches[2].toUpperCase(); // Extract source currency
     const toCurrency = matches[3].toUpperCase(); // Extract target currency
 
     if (!isNaN(amount) && fromCurrency && toCurrency) {
-        window.backend.convertCurrency(amount, fromCurrency, toCurrency).then((result) => {
-            $(".resultBox").append(generate_result("./assets/money.svg", result));
-        });
+      window.backend.convertCurrency(amount, fromCurrency, toCurrency).then((result) => {
+        $(".resultBox").empty();
+        $(".resultBox").append(generate_result("./assets/money.svg", result));
+      });
     } else {
-        $(".resultBox").append(
-            generate_result("./assets/money.svg", "Invalid currency conversion query.")
-        );
+      $(".resultBox").append(
+        generate_result("./assets/money.svg", "Invalid currency conversion query.")
+      );
     }
-}
+  }
   // If no specific regex is mentioned, just offer to search online for the query
   else {
     let google_search = generate_result(
@@ -318,10 +326,10 @@ $(document).on("keyup", (key) => {
   } else {
     if ($(document.activeElement).attr("id") != "search") {
       keys_to_ignore = [16, 18, 8, 39, 37, 144, 17, 91, 27, 45, 36, 35, 33, 34, 13];
-      if(!keys_to_ignore.includes(key.originalEvent.keyCode)) {
+      if (!keys_to_ignore.includes(key.originalEvent.keyCode)) {
         $("#search").val($("#search").val() + key.originalEvent.key);
       }
       $("#search").focus();
     }
-  }     
+  }
 });
