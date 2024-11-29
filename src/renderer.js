@@ -36,13 +36,13 @@ $("#search").on("input", () => {
 
   audio_pattern = new RegExp("a:\\s*(\\d+)");
   brightness_pattern = new RegExp("b:\\s*(\\d+)");
-  equation_pattern = new RegExp("eq:s*(.+)");
-  dictionary_pattern = new RegExp("define:s*(.+)");
-  timer_pattern = new RegExp("timer:s*(.+)");
-  google_pattern = new RegExp("g:s*(.+)");
-  youtube_pattern = new RegExp("y:s*(.+)");
-  launch_app_cmd = new RegExp("la:s*(.+)");
-  math_pattern = new RegExp("m:s*(.+)");
+  equation_pattern = new RegExp("eq:\\s*(.+)");
+  dictionary_pattern = new RegExp("define:\\s*(.+)");
+  timer_pattern = new RegExp("timer:\\s*(\\d+)\\s*([a-zA-Z])");
+  google_pattern = new RegExp("g:\\s*(.+)");
+  youtube_pattern = new RegExp("y:\\s*(.+)");
+  launch_app_cmd = new RegExp("la:\\s*(.+)");
+  math_pattern = new RegExp("m:\\s*(.+)");
   currency_pattern = new RegExp("convert:\\s*([0-9.]+)\\s*([A-Za-z]+)\\s*to\\s*([A-Za-z]+)", "i");
 
   ///// Result Reg Ex /////
@@ -158,29 +158,17 @@ $("#search").on("input", () => {
 
   //timer functionality
   else if (timer_pattern.test(text)) {
-    let seconds = parseInt(text.match(timer_pattern)[0]);
-    if (!isNaN(seconds)) {
-      // Create a result box for the timer countdown
-      let timer_result = generate_result(
-        "./assets/timer.svg",
-        `Timer: ${seconds} seconds`
-      );
-      $(".resultBox").append(timer_result);
-
-      // Start the timer
-      window.backend.setTimer(seconds);
-
-      // Update the timer UI on each sec
-      window.backend.onTimerUpdate((time) => {
-        timer_result.querySelector(
-          "p"
-        ).innerHTML = `Timer: ${time} seconds remaining`;
-      });
-
-      // When the timer is done, update the message
-      window.backend.onTimerDone(() => {
-        timer_result.querySelector("p").innerHTML = "Time's up!";
-      });
+    let unit = text.match(timer_pattern)[2];
+    let timer_response = generate_result("./assets/timer.svg", `Set a Timer for ${text.substr(6)}`)
+    let time = unit.toLowerCase() == 's' ? parseInt(text.match(timer_pattern)[1]) :
+               unit.toLowerCase() == 'm' ? parseInt(text.match(timer_pattern)[1]) * 60 :
+               unit.toLowerCase() == 'h' ? parseInt(text.match(timer_pattern)[1]) * 3600:
+               -1;
+    if(time != -1) {
+      timer_response.addEventListener('click', () => {resClicked();window.backend.setTimer(time);});
+      $(".resultBox").append(timer_response);
+    } else {
+      $(".resultBox").append(generate_result("./assets/timer.svg", "Enter a valid time unit (s/m/h)"));
     }
   }
 
@@ -232,7 +220,7 @@ $("#search").on("input", () => {
     }
   }
 
-
+  // Currency Converter
   else if (currency_pattern.test(text)) {
     const matches = text.match(currency_pattern);
     const amount = parseFloat(matches[1]); // Extract amount

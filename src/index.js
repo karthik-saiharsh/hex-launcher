@@ -1,10 +1,11 @@
-const { app, BrowserWindow, Menu, globalShortcut, screen, ipcMain, shell } = require('electron');
+const { app, BrowserWindow, Menu, globalShortcut, screen, ipcMain, shell, Notification } = require('electron');
 const path = require('node:path');
 const isInstalled = require('is-program-installed');
 const {exec} = require('child_process');
 const { evaluate} = require('mathjs');
 const loudness = require('loudness');
 const fetch = require("node-fetch");
+const { title } = require('node:process');
 
 
 
@@ -80,6 +81,20 @@ app.on('window-all-closed', () => {
     app.quit();
 });
 
+//// HELPER FUNCTIONS ////
+function setAlarm(hours, minutes) {
+  let now = new Date()
+  if(now.getHours()==hours && now.getMinutes() == minutes()) {
+    new Notification({title:"Alarm Remainder", body: `Your alarm for ${hours}:${minutes} is due`, timeoutType: 'never'}).show();
+    return;
+  }
+
+  if(now.getHours() < hours) {
+    setTimeout((hours, minutes) => {setAlarm(hours, minutes)}, 1000);
+  }
+}
+//// HELPER FUNCTIONS ////
+
 // Connecting Actions from IPCRenderer
 ipcMain.on('search', (event, query) => {shell.openExternal(`https://www.google.com/search?q=${encodeURIComponent(query)}`);});
 ipcMain.on('quit', () => {app.quit()});
@@ -89,6 +104,8 @@ ipcMain.on('launch-app', (event, appName) => {exec(appName)});
 ipcMain.on('open-yt', (event, query) => {shell.openExternal(`https://www.youtube.com/results?search_query=${encodeURIComponent(query)}`)});
 ipcMain.on('print', (event, val) => {console.log(val)});
 ipcMain.handle('math-eval', (event, func) => {return evaluate(func)});
+ipcMain.on('set-timer', (event, time) => {setTimeout(() => {new Notification({title:"Time up!", body:"You set a timer, and the time's up!", timeoutType:"never"}).show()}, time*1000)});
+ipcMain.on('set-alarm', (event, hours, minutes, seconds) => {})
 ipcMain.handle('solve-equation', (event, equation, variable) => {
   try {
       const evaluateEquation = (x) => {
@@ -125,19 +142,7 @@ ipcMain.handle('get-definition', async (event, word) => {
   }
 });
 
-ipcMain.on('set-timer', (event, seconds) => {
-  let remainingTime = seconds;
 
-  const interval = setInterval(() => {
-      if (remainingTime > 0) {
-          event.reply('timer-update', remainingTime);
-          remainingTime--;
-      } else {
-          clearInterval(interval);
-          event.reply('timer-done');
-      }
-  }, 1000);
-});
 ipcMain.handle('set-audio', async (event, volume) => {
   try {
       await loudness.setVolume(volume); 
@@ -185,7 +190,3 @@ ipcMain.handle("convert-currency", async (event, amount, fromCurrency, toCurrenc
       return "Failed to fetch currency conversion.";
   }
 });
-
-function newFunction() {
-  return require('electron');
-}
