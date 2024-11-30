@@ -45,6 +45,9 @@ $("#search").on("input", () => {
   math_pattern = new RegExp("m:\\s*(.+)");
   currency_pattern = new RegExp("convert:\\s*([0-9.]+)\\s*([A-Za-z]+)\\s*to\\s*([A-Za-z]+)", "i");
   alarm_pattern = new RegExp("alarm:\\s*(\\d+)\\s*:\\s*(\\d+)(.*)");
+  joke_pattern = new RegExp("joke");
+  poweroff_pattern = new RegExp("poweroff");
+  reboot_pattern = new RegExp("reboot");
   ///// Result Reg Ex /////
 
   // google search
@@ -108,19 +111,19 @@ $("#search").on("input", () => {
 
 
   // Alarm Functionality
-  else if(alarm_pattern.test(text)) {
+  else if (alarm_pattern.test(text)) {
     hrs = parseInt(text.match(alarm_pattern)[1]);
     mins = parseInt(text.match(alarm_pattern)[2]);
-    
-    if(hrs > 24 || mins > 60) {
+
+    if (hrs > 24 || mins > 60) {
       $(".resultBox").append(generate_result("./assets/alarm.svg", "Invalid Time. Please Select a valid time to set alarm"));
     } else {
       alarm_result = generate_result("./assets/alarm.svg", `Set an alarm for ${hrs}:${mins}`);
-      alarm_result.addEventListener('click', () => {resClicked(); window.backend.setAlarm(hrs, mins)});
+      alarm_result.addEventListener('click', () => { resClicked(); window.backend.setAlarm(hrs, mins) });
       $(".resultBox").append(alarm_result);
     }
-    
-    
+
+
   }
 
   // Solving Math Expressions
@@ -162,7 +165,7 @@ $("#search").on("input", () => {
             let definition = generate_result("./assets/Dictionary.svg", definitions[i]['definition']);
             $(".resultBox").append(definition);
           }
-        })
+        })  
         .catch((error) => {
           const resultBox = document.querySelector(".resultBox");
           resultBox.innerHTML = '';
@@ -178,11 +181,11 @@ $("#search").on("input", () => {
     let unit = text.match(timer_pattern)[2];
     let timer_response = generate_result("./assets/timer.svg", `Set a Timer for ${text.substr(6)}`)
     let time = unit.toLowerCase() == 's' ? parseInt(text.match(timer_pattern)[1]) :
-               unit.toLowerCase() == 'm' ? parseInt(text.match(timer_pattern)[1]) * 60 :
-               unit.toLowerCase() == 'h' ? parseInt(text.match(timer_pattern)[1]) * 3600:
-               -1;
-    if(time != -1) {
-      timer_response.addEventListener('click', () => {resClicked();window.backend.setTimer(time);});
+      unit.toLowerCase() == 'm' ? parseInt(text.match(timer_pattern)[1]) * 60 :
+        unit.toLowerCase() == 'h' ? parseInt(text.match(timer_pattern)[1]) * 3600 :
+          -1;
+    if (time != -1) {
+      timer_response.addEventListener('click', () => { resClicked(); window.backend.setTimer(time); });
       $(".resultBox").append(timer_response);
     } else {
       $(".resultBox").append(generate_result("./assets/timer.svg", "Enter a valid time unit (s/m/h)"));
@@ -237,6 +240,23 @@ $("#search").on("input", () => {
     }
   }
 
+  // Generate a Joke
+  else if (joke_pattern.test(text)) {
+    joke_result = generate_result("./assets/joke.svg", "Get a Joke");
+    joke_result.addEventListener('click', () => {
+      $(".resultBox").empty();
+      $("#search").val("");
+      $.getJSON("https://v2.jokeapi.dev/joke/Programming,Miscellaneous,Pun,Spooky,Christmas?blacklistFlags=nsfw,religious,political,racist,sexist,explicit", function (data) {
+        if (data['type'] == "single") {
+          $(".resultBox").append(generate_result("./assets/joke.svg", data['joke']));
+        } else {
+          $(".resultBox").append(generate_result("./assets/joke.svg", `${data['setup']}\n${data['delivery']}`));
+        }
+      });
+    });
+    $(".resultBox").append(joke_result);
+  }
+
   // Currency Converter
   else if (currency_pattern.test(text)) {
     const matches = text.match(currency_pattern);
@@ -255,6 +275,21 @@ $("#search").on("input", () => {
       );
     }
   }
+
+  // Power Control Options: POWEROFF
+  else if(poweroff_pattern.test(text)) {
+    poweroff_result = generate_result("./assets/poweroff.svg", "Shutdown the Device");
+    poweroff_result.addEventListener('click', () => {window.backend.executeCommand(["poweroff", "shutdown /s"])});
+    $(".resultBox").append(poweroff_result);
+  }
+
+  // Power Control Options: REBOOT
+  else if(reboot_pattern.test(text)) {
+    reboot_result = generate_result("./assets/reboot.svg", "Restart the Device");
+    reboot_result.addEventListener('click', () => {window.backend.executeCommand(["reboot", "shutdown /r"])});
+    $(".resultBox").append(reboot_result);
+  }
+
 
   // If no specific regex is mentioned, just offer to search online for the query
   else {

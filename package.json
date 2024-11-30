@@ -29,7 +29,6 @@
     "electron-squirrel-startup": "^1.0.1",
     "is-program-installed": "^2.3.10",
     "loudness": "^0.4.2",
-    "mathjs": "^14.0.0",
-    "node-notifier": "^10.0.1"
+    "mathjs": "^14.0.0"
   }
 }
