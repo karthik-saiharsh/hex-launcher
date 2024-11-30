@@ -84,13 +84,11 @@ app.on('window-all-closed', () => {
 //// HELPER FUNCTIONS ////
 function setAlarm(hours, minutes) {
   let now = new Date()
-  if(now.getHours()==hours && now.getMinutes() == minutes()) {
+  if(now.getHours()==hours && now.getMinutes() == minutes) {
     new Notification({title:"Alarm Remainder", body: `Your alarm for ${hours}:${minutes} is due`, timeoutType: 'never'}).show();
     return;
-  }
-
-  if(now.getHours() < hours) {
-    setTimeout((hours, minutes) => {setAlarm(hours, minutes)}, 1000);
+  } else {
+    setTimeout(()=>{setAlarm(hours, minutes)}, 1000);
   }
 }
 //// HELPER FUNCTIONS ////
@@ -105,7 +103,9 @@ ipcMain.on('open-yt', (event, query) => {shell.openExternal(`https://www.youtube
 ipcMain.on('print', (event, val) => {console.log(val)});
 ipcMain.handle('math-eval', (event, func) => {return evaluate(func)});
 ipcMain.on('set-timer', (event, time) => {setTimeout(() => {new Notification({title:"Time up!", body:"You set a timer, and the time's up!", timeoutType:"never"}).show()}, time*1000)});
-ipcMain.on('set-alarm', (event, hours, minutes, seconds) => {})
+ipcMain.on('set-alarm', (event, hours, minutes) => {setAlarm(hours, minutes)});
+
+
 ipcMain.handle('solve-equation', (event, equation, variable) => {
   try {
       const evaluateEquation = (x) => {

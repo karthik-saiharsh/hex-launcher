@@ -44,7 +44,7 @@ $("#search").on("input", () => {
   launch_app_cmd = new RegExp("la:\\s*(.+)");
   math_pattern = new RegExp("m:\\s*(.+)");
   currency_pattern = new RegExp("convert:\\s*([0-9.]+)\\s*([A-Za-z]+)\\s*to\\s*([A-Za-z]+)", "i");
-
+  alarm_pattern = new RegExp("alarm:\\s*(\\d+)\\s*:\\s*(\\d+)(.*)");
   ///// Result Reg Ex /////
 
   // google search
@@ -104,6 +104,23 @@ $("#search").on("input", () => {
           );
         }
       });
+  }
+
+
+  // Alarm Functionality
+  else if(alarm_pattern.test(text)) {
+    hrs = parseInt(text.match(alarm_pattern)[1]);
+    mins = parseInt(text.match(alarm_pattern)[2]);
+    
+    if(hrs > 24 || mins > 60) {
+      $(".resultBox").append(generate_result("./assets/alarm.svg", "Invalid Time. Please Select a valid time to set alarm"));
+    } else {
+      alarm_result = generate_result("./assets/alarm.svg", `Set an alarm for ${hrs}:${mins}`);
+      alarm_result.addEventListener('click', () => {resClicked(); window.backend.setAlarm(hrs, mins)});
+      $(".resultBox").append(alarm_result);
+    }
+    
+    
   }
 
   // Solving Math Expressions
@@ -238,6 +255,7 @@ $("#search").on("input", () => {
       );
     }
   }
+
   // If no specific regex is mentioned, just offer to search online for the query
   else {
     let google_search = generate_result(
