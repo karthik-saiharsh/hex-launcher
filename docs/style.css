@@ -290,7 +290,7 @@ body {
     }
 
     .demo h1 {
-        font-size: 3rem;
+        font-size: 2.5rem;
     }
 
     .explanation {
@@ -300,7 +300,7 @@ body {
 
     .explanation p {
         width: 100%;
-        font-size: 1.5rem;
+        font-size: 1.2rem;
         margin-top: 4rem;
     }
 }
@@ -381,13 +381,15 @@ body {
         scale: 0.4;
     }
 
-    /* .explanation {
+    .explanation {
         width: 100%;
     }
 
     .explanation p {
         text-align: center;
-    } */
+        padding: auto;
+        font-size: 1rem;
+    }
 
     .title {
         font-size: 3rem;
