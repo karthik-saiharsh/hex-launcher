@@ -173,7 +173,7 @@ ipcMain.handle('set-brightness', (event, brightness) => {
 
 ipcMain.handle("convert-currency", async (event, amount, fromCurrency, toCurrency) => {
   try {
-    const apiKey = "4fb655c61aafd274bbc29be0"; //API Key
+    const apiKey = ""; //API Key
     const url = `https://v6.exchangerate-api.com/v6/${apiKey}/latest/${fromCurrency}`;
 
     const response = await fetch(url);
