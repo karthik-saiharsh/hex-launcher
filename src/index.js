@@ -156,16 +156,47 @@ ipcMain.handle('set-audio', async (event, volume) => {
   }
 });
 
-ipcMain.handle('set-brightness', (event, brightness) => {
+ipcMain.handle('set-brightness', async (event, brightness) => {
   try {
-    // Windows-specific brightness control using PowerShell
-    const command = `powershell.exe (Get-WmiObject -Namespace root/WMI -Class WmiMonitorBrightnessMethods).WmiSetBrightness(1,${brightness})`;
-    exec(command, (error) => {
-      if (error) {
-        return `Failed to set brightness: ${error.message}`;
-      }
-    });
-    return `Brightness set to ${brightness}%`;
+    if (process.platform === 'win32') {
+      // Windows-specific brightness control using PowerShell
+      const command = `powershell.exe (Get-WmiObject -Namespace root/WMI -Class WmiMonitorBrightnessMethods).WmiSetBrightness(1,${brightness})`;
+      return new Promise((resolve) => {
+        exec(command, (error) => {
+          if (error) {
+            resolve(`Failed to set brightness: ${error.message}`);
+          } else {
+            resolve(`Brightness set to ${brightness}%`);
+          }
+        });
+      });
+    } else if (process.platform === 'linux') {
+       return new Promise((resolve) => {
+          // Check if brightnessctl is installed
+          exec('which brightnessctl', (error) => {
+             if (error) {
+                resolve("brightnessctl is not installed. Install it (e.g., apt: sudo apt install brightnessctl).");
+                return;
+             }
+
+             // Try to set brightness
+             exec(`brightnessctl s ${brightness}%`, (err, stdout, stderr) => {
+                if (err) {
+                   // Check for permission issues
+                   if (stderr.includes("Permission denied") || err.message.includes("Permission denied")) {
+                      resolve("Insufficient permissions to change brightness. (refer to Brightnessctl is not working without root permissions. i3/i3#4763)");
+                   } else {
+                      resolve(`Failed to set brightness: ${err.message}`);
+                   }
+                } else {
+                   resolve(`Brightness set to ${brightness}%`);
+                }
+             });
+          });
+       });
+    } else {
+      return "Brightness control not supported on this platform.";
+    }
   } catch (error) {
     return "Failed to set brightness.";
   }
