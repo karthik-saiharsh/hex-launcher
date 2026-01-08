@@ -34,20 +34,20 @@ $("#search").on("input", () => {
 
   ///// Result Reg Ex /////
 
-  audio_pattern = new RegExp("a:\\s*(\\d+)");
-  brightness_pattern = new RegExp("b:\\s*(\\d+)");
-  equation_pattern = new RegExp("eq:\\s*(.+)");
-  dictionary_pattern = new RegExp("define:\\s*(.+)");
-  timer_pattern = new RegExp("timer:\\s*(\\d+)\\s*([a-zA-Z])");
-  google_pattern = new RegExp("g:\\s*(.+)");
-  youtube_pattern = new RegExp("y:\\s*(.+)");
-  launch_app_cmd = new RegExp("la:\\s*(.+)");
-  math_pattern = new RegExp("m:\\s*(.+)");
-  currency_pattern = new RegExp("convert:\\s*([0-9.]+)\\s*([A-Za-z]+)\\s*to\\s*([A-Za-z]+)", "i");
-  alarm_pattern = new RegExp("alarm:\\s*(\\d+)\\s*:\\s*(\\d+)(.*)");
-  joke_pattern = new RegExp("joke");
-  poweroff_pattern = new RegExp("poweroff");
-  reboot_pattern = new RegExp("reboot");
+  audio_pattern = new RegExp("^a:\\s*(\\d+)");
+  brightness_pattern = new RegExp("^b:\\s*(\\d+)");
+  equation_pattern = new RegExp("^eq:\\s*(.+)");
+  dictionary_pattern = new RegExp("^define:\\s*(.+)");
+  timer_pattern = new RegExp("^timer:\\s*(\\d+)\\s*([a-zA-Z])");
+  google_pattern = new RegExp("^g:\\s*(.+)");
+  youtube_pattern = new RegExp("^y:\\s*(.+)");
+  launch_app_cmd = new RegExp("^la:\\s*(.+)");
+  math_pattern = new RegExp("^m:\\s*(.+)");
+  currency_pattern = new RegExp("^convert:\\s*([0-9.]+)\\s*([A-Za-z]+)\\s*to\\s*([A-Za-z]+)", "i");
+  alarm_pattern = new RegExp("^alarm:\\s*(\\d+)\\s*:\\s*(\\d+)(.*)");
+  joke_pattern = new RegExp("^joke");
+  poweroff_pattern = new RegExp("^poweroff");
+  reboot_pattern = new RegExp("^reboot");
   ///// Result Reg Ex /////
 
   // google search
